@@ -61,7 +61,7 @@ const loginUser=async (req,res)=>{
 }
 }
 const display=async(req,res)=>{
-    const data=await Student.find()
-    res.json(data)
+    
+    return res.json(req.user)
 }
 module.exports={registerUser,loginUser,display}
