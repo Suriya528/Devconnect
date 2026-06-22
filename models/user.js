@@ -1,5 +1,6 @@
 const mongoose=require('mongoose')
 const bcrypt=require('bcryptjs')
+const { Timestamp } = require('mongodb')
 const StudentSchema=mongoose.Schema({
     name:{
         firstName:{
@@ -17,7 +18,8 @@ const StudentSchema=mongoose.Schema({
     password:{
         type:String,required:true
     }
-})
+    
+},{Timestamp:true})
 StudentSchema.pre('save',async function(next){
     if(!this.isModified("password")) return 
     try{
