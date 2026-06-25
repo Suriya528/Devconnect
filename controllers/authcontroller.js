@@ -1,11 +1,13 @@
 const Student=require('../models/user')
+const asyncHandler=require('../middleware/asyncHandler')
 const generateToken=require('../utils/generateToken')
-const registerUser=async(req,res)=>{
-    try{
+const registerUser=asyncHandler(async(req,res)=>{
+    
         const {name,email,role,password}=req.body
         const userExists= await Student.findOne({email})
         if(userExists){
-            return res.status(400).json({message:'student already exists'})
+             res.status(400)
+            throw new Error('student already exists')
         }
         
         const user=await Student.create({name,email,role,password})
@@ -18,26 +20,24 @@ const registerUser=async(req,res)=>{
             },
             email:user.email,
             role:user.role,
-            password:user.password,
             token:generateToken(user._id)
         })
 
-    }
-    catch(err){
-        res.status(500).json({message:err.message})
-
-    }
-}
-const loginUser=async (req,res)=>{
-    try{
+    
+    
+})
+const loginUser=asyncHandler(async (req,res)=>{
+    
     const {email,password}=req.body
     const user=await Student.findOne({email})
     if(!user){
-        return res.status(401).json({message:'invalid username or password'})
+         res.status(401)
+         throw new Error('invalid username or password')
     }
     const  isMatch=await user.matchPassword(password)
     if(!isMatch){
-        return res.status(401).json({message:'invalid  password'})
+         res.status(401)
+         throw new Error('invalid username or  password')
     }
     res.status(200).json({
             _id:user._id,
@@ -52,16 +52,10 @@ const loginUser=async (req,res)=>{
             token:generateToken(user._id)
         })
 
-    }
-    catch(err){
-        res.status(500).json({message:err.message
-
-
-        })
-}
-}
-const display=async(req,res)=>{
     
-    return res.json(req.user)
-}
+})
+const display=asyncHandler(async(req,res)=>{
+    
+     res.json(req.user)
+})
 module.exports={registerUser,loginUser,display}

@@ -1,35 +1,34 @@
+const asyncHandler = require('../middleware/asyncHandler')
 const student=require('../models/user')
 
-const getProfile=async (req,res)=>{
-    try{
+const getProfile=asyncHandler(async (req,res)=>{
+    
         const user=await student.findById(req.user._id)
         if(!user){
-            return res.status(404).json({message:'user not found'})
+             res.status(404)
+             throw new Error('user not found')
         }
         res.json({
             _id:user._id,
             name:{
-                firstName:user.firstName,
-                middleName:user.middleName,
-                lastName:user.lastName
+                firstName:user.name.firstName,
+                middleName:user.name.middleName,
+                lastName:user.name.lastName
             },
             email:user.email,
             role:user.role
         })
 
 
-    }
-    catch(err){
-        return res.status(500).json({message: err.message})
+    
+})
 
-    }
-}
-
-const updateProfile=async(req,res)=>{
-    try{
+const updateProfile=asyncHandler(async(req,res)=>{
+    
         const user=await student.findById(req.user._id)
         if(!user){
-            return res.status(404).json({message: 'user not found'})
+             res.status(404)
+             throw new Error( 'user not found')
         }
         user.name=req.body.name || user.name
         user.role=req.body.role || user.role
@@ -42,48 +41,38 @@ const updateProfile=async(req,res)=>{
             role:update.role
 
         })
-    }
-    catch(err){
-        res.status(500).json({message:err.message})
-    }
-}
-const getAllUsers=async(req,res)=>{
-    try{
+    
+})
+const getAllUsers=asyncHandler(async(req,res)=>{
+    
         const users=await student.find().select('-password')
         res.json(users)
-    }
-    catch(err){
-        return res.status(500).json({message:err.message})
-    }
-}
+    
+})
 
-const deleteUser=async(req,res)=>{
-    try{
+const deleteUser=asyncHandler(async(req,res)=>{
+    
         const user=await student.findById(req.user._id)
         if(!user){
-            return res.status(404).json({message: ' user not found'})
+             res.status(404)
+             throw new Error( ' user not found')
         }
         await req.user.deleteOne()
         res.json({message:'account deleted'})
     }
-    catch(err){
-        return res.status(500).json({message:err.message})
-
-    }
-}
-const searchDevelopers=async(req,res)=>{
-    try{
+   
+)
+const searchDevelopers=asyncHandler(async(req,res)=>{
+    
         const keyword=req.query.search ?{
             $or:[
-                {name:{$regex : req.query.search,$options:'i'}},
+                {'name.firstName':{$regex : req.query.search,$options:'i'}},
+                {'name.lastName':{$regex : req.query.search,$options:'i'}},
                 {role:{$regex:req.query.search,$options:'i'}}
             ]}:{}
         const users=await student.find(keyword).select('-password')
         res.json(users)
         
-    }
-    catch(err){
-        res.status(500).json({message:err.message})
-    }
-}
+    
+})
 module.exports={getProfile,updateProfile,getAllUsers,deleteUser,searchDevelopers}

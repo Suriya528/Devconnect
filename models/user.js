@@ -19,7 +19,7 @@ const StudentSchema=mongoose.Schema({
         type:String,required:true
     }
     
-},{Timestamp:true})
+},{timestamps:true})
 StudentSchema.pre('save',async function(next){
     if(!this.isModified("password")) return 
     try{
