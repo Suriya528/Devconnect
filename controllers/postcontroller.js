@@ -1,4 +1,4 @@
-const post = require('../models/post')
+
 const Post=require('../models/post')
 const createPost=async(req,res)=>{
     try{
@@ -27,7 +27,7 @@ const getAllPosts=async(req,res)=>{
 const getPostById=async(req,res)=>{
     try{
         const postdta=post.findById(req.params.id).populate('name','name role')
-        if(!post){
+        if(!postdta){
             return res.status(404).json({message:'user not found'})
 
         }
@@ -75,4 +75,47 @@ const deletePost=async(req,res)=>{
         res.status(500).json({message:err.message})
     }
 }
-module.exports={createPost,getAllPosts,getPostById,toggleLike,deletePost}
+const createComment=async(req,res)=>{
+    try{
+    const postdta=await Post.findById(req.params.id)
+    if(!postdta){
+        return res.status(404).json({message: 'post not found'})
+    }
+    const comment={
+        name:req.user._id,
+        text:req.body.text
+    }
+    postdta.comments.push(comment)
+    await postdta.save()
+    const updatedComment= await Post.findById(req.params.id).populate('name','name role').populate('comments.name','name role')
+    res.status(201).json(updatedComment.comments)
+}
+catch(err){
+    res.status(400).json({message: err.message})
+}
+}
+
+const deleteComment=async(req,res)=>{
+    try{
+        const postdta=await Post.findById(req.params.id)
+        if(!postdta){
+            return res.status(404).json({message: 'Post not found'})
+        }
+        const comment=postdta.comments.find((C)=> C._id.toString()==req.params.commentId)
+        if(!comment){
+            return res.status(404).json({message:'comment not found'})
+        }
+        if(comment.name.toString()!==req.user._id.toString()){
+            return res.status(403).json({message: 'not authorized to delete'})
+        }
+        postdta.comments=postdta.comments.filter((c)=>c._id.toString()!==req.params.commentId)
+        await postdta.save()
+        res.json({message:'comment deleted successfully'})
+
+    }
+    catch(err){
+        res.status(500).json({message: err.message})
+    }
+}
+
+module.exports={createPost,getAllPosts,getPostById,toggleLike,deletePost,createComment,deleteComment}

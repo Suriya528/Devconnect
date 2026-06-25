@@ -1,4 +1,5 @@
 const student=require('../models/user')
+
 const getProfile=async (req,res)=>{
     try{
         const user=await student.findById(req.user._id)
@@ -70,4 +71,19 @@ const deleteUser=async(req,res)=>{
 
     }
 }
-module.exports={getProfile,updateProfile,getAllUsers,deleteUser}
+const searchDevelopers=async(req,res)=>{
+    try{
+        const keyword=req.query.search ?{
+            $or:[
+                {name:{$regex : req.query.search,$options:'i'}},
+                {role:{$regex:req.query.search,$options:'i'}}
+            ]}:{}
+        const users=await student.find(keyword).select('-password')
+        res.json(users)
+        
+    }
+    catch(err){
+        res.status(500).json({message:err.message})
+    }
+}
+module.exports={getProfile,updateProfile,getAllUsers,deleteUser,searchDevelopers}
