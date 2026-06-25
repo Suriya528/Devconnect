@@ -64,12 +64,15 @@ const deleteUser=asyncHandler(async(req,res)=>{
 )
 const searchDevelopers=asyncHandler(async(req,res)=>{
     
-        const keyword=req.query.search ?{
+        const keyword=req.query.search 
+        ? {
             $or:[
                 {'name.firstName':{$regex : req.query.search,$options:'i'}},
                 {'name.lastName':{$regex : req.query.search,$options:'i'}},
                 {role:{$regex:req.query.search,$options:'i'}}
-            ]}:{}
+            ]
+        }
+        :{}
         const users=await student.find(keyword).select('-password')
         res.json(users)
         

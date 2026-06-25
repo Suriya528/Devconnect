@@ -9,7 +9,7 @@ const { notFound, errorHandler } = require('./middleware/errorMiddleware')
 
 Connectdb()
 const app=express()
-app.use(express.cors())
+app.use(cors())
 app.use(express.json())
 app.use('/api/auth',require('./routes/auth'))
 app.use('/api/user',require('./routes/userrouter'))
@@ -22,5 +22,5 @@ app.use(errorHandler)
 
 const PORT=process.env.PORT || 3000
 app.listen(PORT,()=>{
-    console.log('server running on the port ${PORT}')
+    console.log(`server running on the port ${PORT}`)
 })
