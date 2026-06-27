@@ -11,6 +11,13 @@ const Dashboard = () => {
     toast.success('Logged out successfully');
     navigate('/login');
   };
+  
+const fullName = [user?.firstName, user?.middleName, user?.lastName]
+  .filter(Boolean)
+  .join(' ');
+
+
+
 
   return (
     <div className="min-h-screen bg-gray-950 px-4 py-10">
@@ -21,7 +28,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-white">
-                Welcome, {user?.name}! 👋
+              Welcome, {fullName}! 👋
               </h1>
               <p className="text-blue-400 mt-1">{user?.role}</p>
               <p className="text-gray-400 text-sm mt-1">{user?.email}</p>

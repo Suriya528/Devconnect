@@ -9,7 +9,9 @@ const Register = () => {
   const { login } = useAuth();
 
   const [formData, setFormData] = useState({
-    name: '',
+    firstName:'',
+    middleName:'',
+    lastName:'',
     email: '',
     password: '',
     role: ''
@@ -23,11 +25,11 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { name, email, password, role } = formData;
+    const { firstName,middleName,lastName, email, password, role } = formData;
 
     // Client side validation
-    if (!name || !email || !password || !role) {
-      return toast.error('All fields are required');
+    if (!firstName ||!middleName||!lastName || !email || !password || !role) {
+      return toast.error('All fields are required fields');
     }
     if (password.length < 6) {
       return toast.error('Password must be at least 6 characters');
@@ -35,11 +37,18 @@ const Register = () => {
 
     try {
       setLoading(true);
-      const { data } = await axios.post('/auth/register', formData);
+      const { data } = await axios.post('/api/auth/register', formData);
       login(
-        { _id: data._id, name: data.name, email: data.email, role: data.role },
-        data.token
-      );
+  {
+    _id: data._id,
+    firstName: data.name.firstName,
+    middleName: data.name.middleName,
+    lastName: data.name.lastName,
+    email: data.email,
+    role: data.role
+  },
+  data.token
+);
       toast.success('Account created successfully! 🚀');
       navigate('/dashboard');
     } catch (error) {
@@ -62,16 +71,42 @@ const Register = () => {
         {/* Form */}
         <div className="flex flex-col gap-4">
           <div>
-            <label className="text-sm text-gray-400 mb-1 block">Full Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Suriya"
-              className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
-            />
-          </div>
+  <label className="text-sm text-gray-400 mb-1 block">First Name</label>
+  <input
+    type="text"
+    name="firstName"
+    value={formData.firstName}
+    onChange={handleChange}
+    placeholder="Suriya"
+    className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
+  />
+</div>
+
+<div>
+  <label className="text-sm text-gray-400 mb-1 block">
+    Middle Name <span className="text-gray-600">(optional)</span>
+  </label>
+  <input
+    type="text"
+    name="middleName"
+    value={formData.middleName}
+    onChange={handleChange}
+    placeholder="Optional"
+    className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
+  />
+</div>
+
+<div>
+  <label className="text-sm text-gray-400 mb-1 block">Last Name</label>
+  <input
+    type="text"
+    name="lastName"
+    value={formData.lastName}
+    onChange={handleChange}
+    placeholder="E"
+    className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
+  />
+</div>
 
           <div>
             <label className="text-sm text-gray-400 mb-1 block">Email</label>

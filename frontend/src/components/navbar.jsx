@@ -15,7 +15,7 @@ const Navbar=()=>{
             <div className="flex gap-4 items-center">
                 {user ?(
                     <>
-                    <span className="text-gray-300 text-sm">hi,{user?.name}</span>
+                    <span className="text-gray-300 text-sm">hi,{user?.firstName}</span>
                     <Link to="/dashboard" className="hover:text-blue-400">Dashboard</Link>
                     <button onClick={handlelogout} 
                     className="bg-red-500 px-3 py-1 rounded hover:bg-red-600 text-sm">

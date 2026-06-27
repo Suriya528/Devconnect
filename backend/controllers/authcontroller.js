@@ -3,21 +3,17 @@ const asyncHandler=require('../middleware/asyncHandler')
 const generateToken=require('../utils/generateToken')
 const registerUser=asyncHandler(async(req,res)=>{
     
-        const {name,email,role,password}=req.body
+        const {firstName,lastName,middleName,email,role,password}=req.body
         const userExists= await Student.findOne({email})
         if(userExists){
              res.status(400)
             throw new Error('student already exists')
         }
         
-        const user=await Student.create({name,email,role,password})
+        const user=await Student.create({name:{firstName,middleName,lastName},email,role,password})
         res.status(201).json({
             _id:user._id,
-            name:{
-                firstName:user.name.firstName,
-                middleName:user.name.middleName,
-                lastName:user.name.lastName
-            },
+            name:user.name,
             email:user.email,
             role:user.role,
             token:generateToken(user._id)
