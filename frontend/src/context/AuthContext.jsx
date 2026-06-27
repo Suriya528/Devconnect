@@ -7,8 +7,10 @@ export const AuthProvider=({children})=>{
     const [loading,setloading]=useState(true)
     useEffect(()=>{
         const storedUser=localStorage.getItem('user')
-        if(storedUser){
+        const storedToken=localStorage.getItem('token')
+        if(storedUser && storedToken){
             setuser(JSON.parse(storedUser))
+            settoken(storedToken)
         }
         setloading(false)
     },[])
