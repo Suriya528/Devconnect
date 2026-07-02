@@ -27,6 +27,7 @@ const Navbar=()=>{
                     <>
                     <Link to="/login" className="hover:text-blue-400">Login</Link>
                     <Link to="/register" className="bg-blue-500 px-3 py-1 rounded hover:bg-blue-600 text-sm">Register</Link>
+                    <Link to='/feed' className="hover:text-blue-400 text-sm">Feed</Link>
                     </>
                 )}
             

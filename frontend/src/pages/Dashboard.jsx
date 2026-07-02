@@ -42,18 +42,20 @@ const fullName = [user?.firstName, user?.middleName, user?.lastName]
           </div>
         </div>
 
-        {/* Coming soon cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-          {['Posts Feed', 'Search Developers', 'My Profile'].map((item) => (
-            <div
-              key={item}
-              className="bg-gray-900 rounded-xl p-6 text-center text-gray-400 border border-gray-800"
-            >
-              <p className="font-medium">{item}</p>
-              <p className="text-xs mt-1">Coming Day 10+</p>
-            </div>
-          ))}
-        </div>
+        :{
+        [
+  { label: 'Posts Feed', path: '/feed' },
+  { label: 'Search Developers', path: '/search' },
+  { label: 'My Profile', path: '/profile' }
+].map((item) => (
+  <button
+    key={item.label}
+    onClick={() => navigate(item.path)}
+    className="bg-gray-900 hover:bg-gray-800 rounded-xl p-6 text-center text-gray-300 border border-gray-800 transition-colors"
+  >
+    <p className="font-medium">{item.label}</p>
+  </button>
+))}
 
       </div>
     </div>

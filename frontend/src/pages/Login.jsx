@@ -29,12 +29,19 @@ const Login = () => {
 
     try {
       setLoading(true);
-      const { data } = await axios.post('/auth/login', formData);
+      const { data } = await axios.post('/api/auth/login', formData);
       login(
-        { _id: data._id, name: data.name, email: data.email, role: data.role },
-        data.token
-      );
-      toast.success(`Welcome back, ${data.name}! 👋`);
+  {
+    _id: data._id,
+    firstName: data.name.firstName,
+    middleName: data.name.middleName,
+    lastName: data.name.lastName,
+    email: data.email,
+    role: data.role
+  },
+  data.token
+);
+      toast.success(`Welcome back, ${data.name} ! 👋`);
       navigate('/dashboard');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed');
