@@ -34,7 +34,7 @@ const reviewCode = asyncHandler(async (req, res) => {
     throw new Error('AI service not configured')
   }
 
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
   const result = await model.generateContent(REVIEW_PROMPT + post.text)
   const response = await result.response
