@@ -39,7 +39,7 @@ app.use(notFound)
 app.use(errorHandler)
 
 const server = http.createServer(app)
-const PORT = process.env.PORT || 3000
+const PORT = parseInt(process.env.PORT || '3000', 10)
 
 const io = new Server(server, {
   cors: {
@@ -66,17 +66,6 @@ io.on('connection', (socket) => {
   })
 })
 
-const startServer = (port) => {
-  server.listen(port, () => {
-    console.log(`Server running on port ${port}`)
-  }).on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-      console.warn(`Port ${port} in use, trying ${port + 1}...`)
-      startServer(port + 1)
-    } else {
-      console.error('Server error:', err)
-    }
-  })
-}
-
-startServer(PORT)
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
