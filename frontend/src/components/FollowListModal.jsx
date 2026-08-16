@@ -32,14 +32,23 @@ const FollowListModal = ({ open, onClose, type, userId }) => {
     fetchList();
   }, [open, userId, type]);
 
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [open, onClose]);
+
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-900 rounded-2xl border border-gray-800 w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" role="dialog" aria-modal="true" aria-labelledby="follow-list-title" onClick={onClose}>
+      <div className="bg-gray-900 rounded-2xl border border-gray-800 w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-800">
-          <h2 className="text-white font-bold text-lg capitalize">
+          <h2 id="follow-list-title" className="text-white font-bold text-lg capitalize">
             {type}
           </h2>
           <button
@@ -104,8 +113,17 @@ const FollowListItem = ({ person, onClose }) => {
   return (
     <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-800 transition-colors">
       <div
+        role="link"
+        tabIndex={0}
+        aria-label={"View profile of " + fullName}
         className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer"
         onClick={handleNavigate}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleNavigate();
+          }
+        }}
       >
         <Avatar firstName={firstName} lastName={lastName} size="md" />
         <div className="flex-1 min-w-0">

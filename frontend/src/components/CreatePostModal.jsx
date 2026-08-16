@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { X, Image, Video, ChevronDown, ChevronUp, Plus, Upload, Loader2 } from 'lucide-react';
 import useCreatePost from '../hooks/useCreatePost';
 
@@ -33,6 +33,14 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
   const fileInputRef = useRef(null);
   const videoInputRef = useRef(null);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   const onSubmit = async () => {
     await handleSubmit(onPostCreated);
     onClose();
@@ -62,11 +70,11 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
       : 'grid-cols-2';
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-900 rounded-2xl border border-gray-800 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" role="dialog" aria-modal="true" aria-labelledby="create-post-title" onClick={onClose}>
+      <div className="bg-gray-900 rounded-2xl border border-gray-800 w-full max-w-2xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-800">
-          <h2 className="text-white font-bold text-lg">Create Post</h2>
+          <h2 id="create-post-title" className="text-white font-bold text-lg">Create Post</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white transition-colors"
@@ -84,6 +92,7 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
             placeholder="Share your work, project, or thoughts..."
             rows={4}
             maxLength={500}
+            aria-label="Post content"
             className="w-full bg-gray-800 text-white px-4 py-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500 resize-none text-sm mb-2"
           />
           <div className="flex justify-end mb-4">
@@ -125,7 +134,16 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
               <div>
                 {images.length === 0 ? (
                   <div
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Upload images. Drag and drop or click to browse."
                     onClick={() => fileInputRef.current?.click()}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        fileInputRef.current?.click();
+                      }
+                    }}
                     onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                     onDragLeave={() => setDragOver(false)}
                     onDrop={handleDrop}
@@ -181,7 +199,16 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
               <div>
                 {!video ? (
                   <div
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Upload video. Click to browse."
                     onClick={() => videoInputRef.current?.click()}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        videoInputRef.current?.click();
+                      }
+                    }}
                     className="border-2 border-dashed border-gray-700 rounded-xl p-6 text-center cursor-pointer hover:border-gray-600 transition-colors"
                   >
                     <Video className="mx-auto text-gray-400 mb-2" size={32} />
@@ -217,7 +244,14 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
             {/* Upload Progress */}
             {(uploading || posting) && uploadProgress > 0 && (
               <div className="mt-3">
-                <div className="w-full bg-gray-800 rounded-full h-2 overflow-hidden">
+                <div
+                  role="progressbar"
+                  aria-valuenow={uploadProgress}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label="Upload progress"
+                  className="w-full bg-gray-800 rounded-full h-2 overflow-hidden"
+                >
                   <div
                     className="bg-blue-600 h-full transition-all duration-300"
                     style={{ width: `${uploadProgress}%` }}
@@ -234,6 +268,7 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
           <div className="mb-4 border border-gray-800 rounded-xl overflow-hidden">
             <button
               onClick={() => setShowDetails((prev) => !prev)}
+              aria-expanded={showDetails}
               className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-800 transition-colors"
             >
               <span className="text-white text-sm font-medium">Project Details</span>

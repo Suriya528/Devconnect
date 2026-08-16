@@ -51,10 +51,14 @@ const PostCard = ({ post, onLike, onDelete, onAddComment, onDeleteComment, onAiR
   };
 
   return (
-    <div className="bg-gray-900 rounded-2xl p-6 shadow-md border border-gray-800">
+    <article aria-label={"Post by " + (fullName || 'Unknown User')} className="bg-gray-900 rounded-2xl p-6 shadow-md border border-gray-800">
       {/* User info */}
       <div className="flex items-center justify-between mb-4">
         <div
+          role="link"
+          tabIndex={0}
+          aria-label={"View profile of " + (fullName || 'Unknown User')}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); postUserId && navigate('/developers/' + postUserId); } }}
           className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
           onClick={() => postUserId && navigate(`/developers/${postUserId}`)}
         >
@@ -196,7 +200,7 @@ const PostCard = ({ post, onLike, onDelete, onAddComment, onDeleteComment, onAiR
       {showComments && (
         <div className="mt-4 pt-4 border-t border-gray-800">
           {post.comments?.length > 0 ? (
-            <div className="flex flex-col gap-3 mb-4">
+            <div role="list" aria-label="Comments" className="flex flex-col gap-3 mb-4">
               {post.comments.map((comment) => {
                 const commentUser = comment.name || {};
                 const commentUserName = commentUser.name || {};
@@ -209,7 +213,7 @@ const PostCard = ({ post, onLike, onDelete, onAddComment, onDeleteComment, onAiR
                 const isAi = comment.isAiReview;
 
                 return (
-                  <div key={comment._id} className={`flex items-start gap-2 ${isAi ? 'bg-purple-950/20 -mx-1 px-1 py-1.5 rounded-lg border border-purple-900/30' : ''}`}>
+                  <div key={comment._id} role="listitem" className={`flex items-start gap-2 ${isAi ? 'bg-purple-950/20 -mx-1 px-1 py-1.5 rounded-lg border border-purple-900/30' : ''}`}>
                     <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 ${isAi ? 'bg-gradient-to-br from-purple-600 to-blue-600' : 'bg-gray-700'}`}>
                       {isAi ? '🤖' : <>{(commentUserName.firstName || commentUser.firstName)?.[0]}{(commentUserName.lastName || commentUser.lastName)?.[0]}</>}
                     </div>
@@ -243,6 +247,7 @@ const PostCard = ({ post, onLike, onDelete, onAddComment, onDeleteComment, onAiR
             <div className="flex items-center gap-2">
               <input
                 type="text"
+                aria-label="Write a comment"
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
                 onKeyDown={(e) => {
@@ -267,7 +272,7 @@ const PostCard = ({ post, onLike, onDelete, onAddComment, onDeleteComment, onAiR
           )}
         </div>
       )}
-    </div>
+    </article>
   );
 };
 

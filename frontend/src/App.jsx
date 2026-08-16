@@ -18,8 +18,13 @@ import NotFound from './pages/NotFound';
 const Layout = () => {
   return (
     <>
+      <a href="#main-content" className="skip-to-content">
+        Skip to main content
+      </a>
       <Navbar />
-      <Outlet />
+      <main id="main-content">
+        <Outlet />
+      </main>
     </>
   );
 };
@@ -88,7 +93,13 @@ const App = () => {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <Toaster position="top-right" />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            role: 'status',
+            ariaProps: { role: 'status', 'aria-live': 'polite' }
+          }}
+        />
         <RouterProvider router={router} />
       </AuthProvider>
     </ErrorBoundary>

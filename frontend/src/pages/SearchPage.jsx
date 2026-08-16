@@ -15,16 +15,18 @@ const SearchPage = () => {
         </h1>
 
         {/* Search input */}
-        <div className="relative mb-6">
+        <div className="relative mb-6" role="search">
           <Search
             size={18}
             className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+            aria-hidden="true"
           />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by name or role..."
+            aria-label="Search developers by name or role"
             className="w-full bg-gray-900 text-white pl-11 pr-4 py-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500 border border-gray-800"
           />
           {loading && (
@@ -71,7 +73,7 @@ const SearchPage = () => {
           />
         ) : (
           <div className="flex flex-col gap-3">
-            <p className="text-gray-400 text-sm mb-2">
+            <p className="text-gray-400 text-sm mb-2" aria-live="polite">
               {results.length} developer{results.length > 1 ? 's' : ''} found
             </p>
             {results.map((dev) => (

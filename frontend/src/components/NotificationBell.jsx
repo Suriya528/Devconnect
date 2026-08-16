@@ -31,6 +31,15 @@ const NotificationBell = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [open]);
+
   const handleNotificationClick = async (notification) => {
     if (!notification.read) {
       await markAsRead(notification._id);
@@ -52,6 +61,8 @@ const NotificationBell = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setOpen((prev) => !prev)}
+        aria-expanded={open}
+        aria-haspopup="true"
         className="relative text-gray-400 hover:text-white transition-colors"
         aria-label="Notifications"
       >
@@ -64,7 +75,11 @@ const NotificationBell = () => {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-80 bg-gray-900 border border-gray-800 rounded-xl shadow-xl z-50 max-h-[400px] overflow-hidden flex flex-col">
+        <div
+          role="menu"
+          aria-label="Notifications"
+          className="absolute right-0 mt-2 w-80 bg-gray-900 border border-gray-800 rounded-xl shadow-xl z-50 max-h-[400px] overflow-hidden flex flex-col"
+        >
           {/* Header */}
           <div className="flex items-center justify-between p-3 border-b border-gray-800">
             <h3 className="text-white font-semibold text-sm">Notifications</h3>
@@ -87,6 +102,7 @@ const NotificationBell = () => {
               recentNotifications.map((notification) => (
                 <button
                   key={notification._id}
+                  role="menuitem"
                   onClick={() => handleNotificationClick(notification)}
                   className={`w-full text-left flex items-start gap-3 p-3 hover:bg-gray-800 transition-colors border-b border-gray-800 last:border-b-0 ${
                     !notification.read ? 'bg-gray-800/50' : ''

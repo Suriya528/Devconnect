@@ -36,7 +36,7 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="bg-gray-900 border-b border-gray-800 px-4 sm:px-6 py-4">
+    <nav aria-label="Main navigation" className="bg-gray-900 border-b border-gray-800 px-4 sm:px-6 py-4">
       <div className="max-w-5xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="text-xl font-bold text-blue-400" onClick={() => setMobileOpen(false)}>
@@ -89,7 +89,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden mt-4 pt-4 border-t border-gray-800 flex flex-col gap-3">
+        <div className="md:hidden mt-4 pt-4 border-t border-gray-800 flex flex-col gap-3" role="navigation" aria-label="Mobile navigation">
           {user ? (
             <>
               {navLink('/dashboard', 'Dashboard', LayoutDashboard)}

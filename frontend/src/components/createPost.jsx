@@ -33,6 +33,7 @@ const CreatePost = ({ onPostCreated }) => {
         </div>
         <div className="flex-1">
           <textarea
+            aria-label="Share something with developers"
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Share something with developers..."
@@ -41,7 +42,7 @@ const CreatePost = ({ onPostCreated }) => {
             className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500 resize-none text-sm"
           />
           <div className="flex items-center justify-between mt-2">
-            <span className={`text-xs ${text.length > 450 ? 'text-red-400' : 'text-gray-500'}`}>
+            <span aria-live="polite" className={`text-xs ${text.length > 450 ? 'text-red-400' : 'text-gray-500'}`}>
               {text.length}/500
             </span>
             <button
