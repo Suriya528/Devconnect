@@ -2,6 +2,9 @@ const dotenv = require('dotenv')
 dotenv.config()
 const express = require('express')
 const cors = require('cors')
+const helmet = require('helmet')
+const rateLimit = require('express-rate-limit')
+const xss = require('xss-clean')
 const Connectdb = require('./config/db')
 const { notFound, errorHandler } = require('./middleware/errorMiddleware')
 const http = require('http')
@@ -23,6 +26,17 @@ app.use(
 )
 
 app.use(express.json())
+
+// Security middlewares
+app.use(helmet())
+app.use(xss())
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again after 15 minutes'
+})
+app.use('/api', limiter)
 
 app.use('/api/auth', require('./routes/auth'))
 app.use('/api/user', require('./routes/userrouter'))
