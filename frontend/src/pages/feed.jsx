@@ -18,7 +18,8 @@ const Feed = () => {
     toggleLike,
     deletePost,
     addComment,
-    deleteComment
+    deleteComment,
+    aiReview
   } = usePosts();
 
   const observerTarget = useRef(null);
@@ -102,6 +103,7 @@ const Feed = () => {
                   onDelete={deletePost}
                   onAddComment={addComment}
                   onDeleteComment={deleteComment}
+                  onAiReview={aiReview}
                 />
               ))}
             </div>

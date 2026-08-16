@@ -153,6 +153,25 @@ const usePosts = () => {
     []
   );
 
+  const aiReview = useCallback(
+    async (postId) => {
+      try {
+        const { data } = await axios.post(`/api/ai/review/${postId}`);
+        setPosts((prev) =>
+          prev.map((post) =>
+            post._id === postId ? { ...post, comments: data.comments } : post
+          )
+        );
+        toast.success('AI Review completed ✨');
+        return true;
+      } catch (err) {
+        toast.error(err.response?.data?.message || 'AI Review failed');
+        return false;
+      }
+    },
+    []
+  );
+
   return {
     posts,
     loading,
@@ -164,7 +183,8 @@ const usePosts = () => {
     toggleLike,
     deletePost,
     addComment,
-    deleteComment
+    deleteComment,
+    aiReview
   };
 };
 

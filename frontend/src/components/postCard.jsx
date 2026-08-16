@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Heart, Trash2, MessageCircle, Send, X, ExternalLink, GitBranch } from 'lucide-react';
+import { Heart, Trash2, MessageCircle, Send, X, ExternalLink, GitBranch, Sparkles } from 'lucide-react';
 
-const PostCard = ({ post, onLike, onDelete, onAddComment, onDeleteComment }) => {
+const PostCard = ({ post, onLike, onDelete, onAddComment, onDeleteComment, onAiReview }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [commentLoading, setCommentLoading] = useState(false);
+  const [reviewLoading, setReviewLoading] = useState(false);
 
   const postUser = post.name || post.user || {};
   const postUserName = postUser.name || {};
@@ -166,10 +167,27 @@ const PostCard = ({ post, onLike, onDelete, onAddComment, onDeleteComment }) => 
         {isOwner && (
           <button
             onClick={() => onDelete?.(post._id)}
-            className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-red-400 transition-colors ml-auto"
+            className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-red-400 transition-colors"
             aria-label="Delete post"
           >
             <Trash2 size={16} />
+          </button>
+        )}
+
+        {onAiReview && (
+          <button
+            onClick={async () => {
+              setReviewLoading(true);
+              await onAiReview(post._id);
+              setReviewLoading(false);
+              setShowComments(true);
+            }}
+            disabled={reviewLoading}
+            className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-purple-400 transition-colors ml-auto disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="AI Code Review"
+          >
+            <Sparkles size={16} className={reviewLoading ? 'animate-spin' : ''} />
+            <span className="hidden sm:inline">{reviewLoading ? 'Reviewing...' : 'AI Review'}</span>
           </button>
         )}
       </div>
@@ -190,14 +208,17 @@ const PostCard = ({ post, onLike, onDelete, onAddComment, onDeleteComment }) => 
                 const isCommentOwner = (commentUser._id || commentUser.id)?.toString() === user?._id?.toString();
 
                 return (
-                  <div key={comment._id} className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                      {(commentUserName.firstName || commentUser.firstName)?.[0]}{(commentUserName.lastName || commentUser.lastName)?.[0]}
+                  <div key={comment._id} className={`flex items-start gap-2 ${isAi ? 'bg-purple-950/20 -mx-1 px-1 py-1.5 rounded-lg border border-purple-900/30' : ''}`}>
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 ${isAi ? 'bg-gradient-to-br from-purple-600 to-blue-600' : 'bg-gray-700'}`}>
+                      {isAi ? '🤖' : <>{(commentUserName.firstName || commentUser.firstName)?.[0]}{(commentUserName.lastName || commentUser.lastName)?.[0]}</>}
                     </div>
                     <div className="flex-1 bg-gray-800 rounded-lg px-3 py-2">
                       <div className="flex items-center justify-between">
-                        <p className="text-white text-xs font-semibold">{commentName}</p>
-                        {isCommentOwner && onDeleteComment && (
+                        <p className={`text-xs font-semibold ${isAi ? 'text-purple-400' : 'text-white'}`}>
+                          {isAi ? 'AI Code Review' : commentName}
+                          {isAi && <span className="ml-1.5 px-1.5 py-0.5 bg-purple-900/50 text-purple-300 rounded text-[10px] font-medium">BOT</span>}
+                        </p>
+                        {isCommentOwner && onDeleteComment && !isAi && (
                           <button
                             onClick={() => onDeleteComment(post._id, comment._id)}
                             className="text-gray-500 hover:text-red-400 transition-colors ml-2"
@@ -207,7 +228,7 @@ const PostCard = ({ post, onLike, onDelete, onAddComment, onDeleteComment }) => 
                           </button>
                         )}
                       </div>
-                      <p className="text-gray-300 text-xs mt-0.5">{comment.text}</p>
+                      <p className={`text-xs mt-0.5 whitespace-pre-line ${isAi ? 'text-gray-300 leading-relaxed' : 'text-gray-300'}`}>{comment.text?.replace(/^🤖 AI Code Review:\n?/, '')}</p>
                     </div>
                   </div>
                 );

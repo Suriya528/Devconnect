@@ -198,6 +198,25 @@ const DeveloperProfile = () => {
     []
   );
 
+  const aiReview = useCallback(
+    async (postId) => {
+      try {
+        const { data } = await axios.post(`/api/ai/review/${postId}`);
+        setPosts((prev) =>
+          prev.map((post) =>
+            post._id === postId ? { ...post, comments: data.comments } : post
+          )
+        );
+        toast.success('AI Review completed ✨');
+        return true;
+      } catch (err) {
+        toast.error(err.response?.data?.message || 'AI Review failed');
+        return false;
+      }
+    },
+    []
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-950 px-4 py-8">
@@ -435,6 +454,7 @@ const DeveloperProfile = () => {
                 onDelete={deletePost}
                 onAddComment={addComment}
                 onDeleteComment={deleteComment}
+                onAiReview={aiReview}
               />
             ))}
           </div>

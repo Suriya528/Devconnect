@@ -29,6 +29,7 @@ app.use('/api/user', require('./routes/userrouter'))
 app.use('/api/posts', require('./routes/postrouter'))
 app.use('/api/notifications', require('./routes/notifications'))
 app.use('/api/github', require('./routes/github'))
+app.use('/api/ai', require('./routes/ai'))
 
 app.get('/', (req, res) => {
   res.json({ message: 'DevConnect API is running' })
