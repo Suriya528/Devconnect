@@ -28,7 +28,10 @@ const StudentSchema = mongoose.Schema(
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
     avatar: { type: String, default: '' },
-    devScore: { type: Number, default: 0 }
+    devScore: { type: Number, default: 0 },
+    githubId: { type: String, sparse: true, default: '' },
+    githubUsername: { type: String, default: '' },
+    githubAccessToken: { type: String, select: false, default: '' }
   },
   { timestamps: true }
 )

@@ -12,6 +12,7 @@ import Feed from './pages/feed';
 import SearchPage from './pages/SearchPage';
 import DeveloperProfile from './pages/DeveloperProfile';
 import ProfilePage from './pages/ProfilePage';
+import GitHubCallback from './pages/GitHubCallback';
 import NotFound from './pages/NotFound';
 
 const Layout = () => {
@@ -68,6 +69,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ProfilePage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: 'github/callback',
+        element: (
+          <ProtectedRoute>
+            <GitHubCallback />
           </ProtectedRoute>
         )
       },

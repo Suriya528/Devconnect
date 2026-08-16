@@ -25,6 +25,10 @@ const getProfile = asyncHandler(async (req, res) => {
     linkedin: user.linkedin,
     availability: user.availability,
     avatar: user.avatar,
+    githubUsername: user.githubUsername,
+    githubId: user.githubId,
+    followers: user.followers,
+    following: user.following,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt
   })
@@ -209,7 +213,8 @@ const getUserById = asyncHandler(async (req, res) => {
     devScore,
     followerCount: user.followers.length,
     followingCount: user.following.length,
-    skills: skillsWithEndorsements
+    skills: skillsWithEndorsements,
+    githubUsername: user.githubUsername
   })
 })
 

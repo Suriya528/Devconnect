@@ -1,13 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Pencil, Trash2, ArrowLeft, MapPin, ExternalLink, Briefcase } from 'lucide-react';
+import { Pencil, Trash2, ArrowLeft, MapPin, ExternalLink, Briefcase, Download } from 'lucide-react';
 import useProfile from '../hooks/useProfile';
+import useGitHub from '../hooks/useGitHub';
 import EditProfileModal from '../components/EditProfileModal';
 import PostCard from '../components/PostCard';
 import PostSkeleton from '../components/PostSkeleton';
 import AvatarUpload from '../components/AvatarUpload';
 import EmptyState from '../components/EmptyState';
 import ConfirmModal from '../components/ConfirmModal';
+import GitHubConnect from '../components/GitHubConnect';
+import ContributionGraph from '../components/ContributionGraph';
+import GitHubRepos from '../components/GitHubRepos';
 import { useAuth } from '../context/AuthContext';
 import axios from '../api/axios';
 import { toast } from 'react-hot-toast';
@@ -21,6 +25,13 @@ const ProfilePage = () => {
   const [deleting, setDeleting] = useState(false);
   const [posts, setPosts] = useState(profilePosts);
   const [avatar, setAvatar] = useState(profile?.avatar || '');
+  const [ghConnected, setGhConnected] = useState(!!profile?.githubUsername);
+
+  const {
+    repos, contributions, loading: ghLoading,
+    importLoading, fetchRepos, fetchContributions,
+    importRepos, disconnect: ghDisconnect
+  } = useGitHub();
 
   // Sync posts when profilePosts changes
   useEffect(() => {
@@ -31,7 +42,16 @@ const ProfilePage = () => {
     if (profile?.avatar !== undefined) {
       setAvatar(profile.avatar);
     }
-  }, [profile?.avatar]);
+    setGhConnected(!!profile?.githubUsername);
+  }, [profile?.avatar, profile?.githubUsername]);
+
+  // Fetch GitHub data when connected
+  useEffect(() => {
+    if (ghConnected && profile?.githubUsername) {
+      fetchRepos();
+      fetchContributions();
+    }
+  }, [ghConnected, profile?.githubUsername, fetchRepos, fetchContributions]);
 
   const handleUploadSuccess = (newAvatar) => {
     setAvatar(newAvatar);
@@ -314,6 +334,40 @@ const ProfilePage = () => {
               )}
             </div>
           )}
+
+          {/* GitHub Section */}
+          <div className="mt-6 pt-6 border-t border-gray-800 flex flex-col gap-4">
+            <GitHubConnect
+              githubUsername={ghConnected ? profile?.githubUsername : null}
+              onDisconnect={async () => {
+                const ok = await ghDisconnect();
+                if (ok) setGhConnected(false);
+              }}
+            />
+
+            {ghConnected && (
+              <>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-white font-semibold text-sm">GitHub Activity</h3>
+                  <button
+                    onClick={async () => {
+                      const newPosts = await importRepos();
+                      if (newPosts?.length) {
+                        setPosts((prev) => [...newPosts, ...prev]);
+                      }
+                    }}
+                    disabled={importLoading}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <Download size={12} />
+                    {importLoading ? 'Importing...' : 'Import Repos as Posts'}
+                  </button>
+                </div>
+                <ContributionGraph data={contributions} loading={ghLoading} />
+                <GitHubRepos repos={repos} loading={ghLoading} />
+              </>
+            )}
+          </div>
 
           {/* Stats */}
           <div className="flex gap-6 mt-6 pt-6 border-t border-gray-800">
