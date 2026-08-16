@@ -16,7 +16,7 @@ const {
 } = require('../controllers/userController')
 const { protect } = require('../middleware/authmiddleware')
 const { uploadImages } = require('../middleware/upload')
-const mongoSanitize = require('express-mongo-sanitize')
+const mongoSanitize = require('../middleware/mongoSanitize')
 
 // Order matters: specific routes before /:id
 router.get('/search', protect, searchDevelopers)

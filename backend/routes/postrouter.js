@@ -16,7 +16,7 @@ const {
 } = require('../controllers/postcontroller')
 const { protect } = require('../middleware/authmiddleware')
 const { uploadImages, uploadVideo } = require('../middleware/upload')
-const mongoSanitize = require('express-mongo-sanitize')
+const mongoSanitize = require('../middleware/mongoSanitize')
 
 // Public routes
 router.get('/', getAllPosts)
