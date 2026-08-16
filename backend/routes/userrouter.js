@@ -16,12 +16,13 @@ const {
 } = require('../controllers/userController')
 const { protect } = require('../middleware/authmiddleware')
 const { uploadImages } = require('../middleware/upload')
+const xss = require('../middleware/xssMiddleware')
 
 // Order matters: specific routes before /:id
 router.get('/search', protect, searchDevelopers)
 router.get('/profile', protect, getProfile)
 router.put('/profile', protect, updateUserProfile)
-router.put('/profile/avatar', protect, uploadImages.single('avatar'), uploadAvatar)
+router.put('/profile/avatar', protect, uploadImages.single('avatar'), xss(), uploadAvatar)
 router.delete('/profile', protect, deleteUser)
 router.get('/', protect, getAllUsers)
 router.get('/leaderboard', protect, getLeaderboard)
