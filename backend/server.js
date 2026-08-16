@@ -4,7 +4,7 @@ const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
 const rateLimit = require('express-rate-limit')
-const xss = require('./middleware/xssMiddleware')
+const mongoSanitize = require('express-mongo-sanitize')
 const Connectdb = require('./config/db')
 const { notFound, errorHandler } = require('./middleware/errorMiddleware')
 const http = require('http')
@@ -30,11 +30,11 @@ app.use(express.json())
 // Security middlewares
 app.set('trust proxy', 1) // Trust first proxy for rate limiting on Render/Heroku
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
-app.use(xss())
+app.use(mongoSanitize())
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 2000, // Increased to 2000 to avoid blocking legit SPA traffic
   message: 'Too many requests from this IP, please try again after 15 minutes'
 })
 app.use('/api', limiter)
