@@ -207,7 +207,7 @@ const Dashboard = () => {
                 return (
                   <Link
                     key={post._id}
-                    to={`/posts/${post._id}`}
+                    to={`/developers/${postUser._id || post.name}`}
                     className="bg-gray-900 rounded-2xl p-5 border border-gray-800 hover:border-blue-600 transition-colors block"
                   >
                     <div className="flex items-center gap-3 mb-3">

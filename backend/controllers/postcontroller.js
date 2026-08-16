@@ -228,13 +228,19 @@ const getTrendingPosts = asyncHandler(async (req, res) => {
   const sevenDaysAgo = new Date()
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
-  const posts = await Post.find({ createdAt: { $gte: sevenDaysAgo } })
-    .populate('name', 'name role')
-    .populate('comments.name', 'name role')
-    .sort({ 'likes': -1 })
-    .limit(5)
+  const posts = await Post.aggregate([
+    { $match: { createdAt: { $gte: sevenDaysAgo } } },
+    { $addFields: { likesCount: { $size: '$likes' } } },
+    { $sort: { likesCount: -1 } },
+    { $limit: 5 }
+  ])
 
-  res.json(posts)
+  const populated = await Post.populate(posts, [
+    { path: 'name', select: 'name role' },
+    { path: 'comments.name', select: 'name role' }
+  ])
+
+  res.json(populated)
 })
 
 // @desc    Delete a post

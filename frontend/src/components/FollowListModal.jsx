@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, UserPlus, UserMinus } from 'lucide-react';
 import axios from '../api/axios';
 import { toast } from 'react-hot-toast';
@@ -76,7 +77,7 @@ const FollowListModal = ({ open, onClose, type, userId }) => {
                 const fullName = [firstName, lastName].filter(Boolean).join(' ');
 
                 return (
-                  <FollowListItem key={person._id} person={person} />
+                  <FollowListItem key={person._id} person={person} onClose={onClose} />
                 );
               })}
             </div>
@@ -87,21 +88,32 @@ const FollowListModal = ({ open, onClose, type, userId }) => {
   );
 };
 
-const FollowListItem = ({ person }) => {
+const FollowListItem = ({ person, onClose }) => {
+  const navigate = useNavigate();
   const { following, loading: followLoading, toggleFollow } = useFollow(person._id);
 
   const firstName = person.name?.firstName || person.firstName;
   const lastName = person.name?.lastName || person.lastName;
   const fullName = [firstName, lastName].filter(Boolean).join(' ');
 
+  const handleNavigate = () => {
+    onClose?.();
+    navigate(`/developers/${person._id}`);
+  };
+
   return (
     <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-800 transition-colors">
-      <Avatar firstName={firstName} lastName={lastName} size="md" />
-      <div className="flex-1 min-w-0">
-        <p className="text-white text-sm font-semibold truncate">
-          {fullName || 'Unknown User'}
-        </p>
-        <p className="text-gray-400 text-xs truncate">{person.role}</p>
+      <div
+        className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer"
+        onClick={handleNavigate}
+      >
+        <Avatar firstName={firstName} lastName={lastName} size="md" />
+        <div className="flex-1 min-w-0">
+          <p className="text-white text-sm font-semibold truncate">
+            {fullName || 'Unknown User'}
+          </p>
+          <p className="text-gray-400 text-xs truncate">{person.role}</p>
+        </div>
       </div>
       <button
         onClick={() => toggleFollow()}

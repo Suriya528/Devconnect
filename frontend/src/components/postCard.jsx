@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Heart, Trash2, MessageCircle, Send, X, ExternalLink, GitBranch } from 'lucide-react';
 
 const PostCard = ({ post, onLike, onDelete, onAddComment, onDeleteComment }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [commentLoading, setCommentLoading] = useState(false);
@@ -51,7 +53,10 @@ const PostCard = ({ post, onLike, onDelete, onAddComment, onDeleteComment }) => 
     <div className="bg-gray-900 rounded-2xl p-6 shadow-md border border-gray-800">
       {/* User info */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
+        <div
+          className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={() => postUserId && navigate(`/developers/${postUserId}`)}
+        >
           <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
             {(postUserName.firstName || postUser.firstName)?.[0]}{(postUserName.lastName || postUser.lastName)?.[0]}
           </div>
