@@ -76,9 +76,6 @@ const useCreatePost = () => {
   const handleSubmit = useCallback(async (onSuccess) => {
     if (!text.trim()) return toast.error('Post text is required');
     if (text.length > 500) return toast.error('Max 500 characters');
-    if (images.length === 0 && !video && techStack.length === 0) {
-      return toast.error('Add some content to your post');
-    }
 
     try {
       setPosting(true);
@@ -111,6 +108,7 @@ const useCreatePost = () => {
       } else {
         const { data } = await axios.post('/api/posts', formData);
         if (onSuccess) onSuccess(data);
+        toast.success('Post created! 🚀');
         reset();
         return;
       }
