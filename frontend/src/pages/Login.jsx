@@ -30,18 +30,27 @@ const Login = () => {
     try {
       setLoading(true);
       const { data } = await axios.post('/api/auth/login', formData);
+      const fullName = [data.name?.firstName, data.name?.middleName, data.name?.lastName]
+        .filter(Boolean)
+        .join(' ');
       login(
-  {
-    _id: data._id,
-    firstName: data.name.firstName,
-    middleName: data.name.middleName,
-    lastName: data.name.lastName,
-    email: data.email,
-    role: data.role
-  },
-  data.token
-);
-      toast.success(`Welcome back, ${data.name} ! 👋`);
+        {
+          _id: data._id,
+          firstName: data.name?.firstName,
+          middleName: data.name?.middleName,
+          lastName: data.name?.lastName,
+          email: data.email,
+          role: data.role,
+          bio: data.bio,
+          skills: data.skills,
+          location: data.location,
+          github: data.github,
+          linkedin: data.linkedin,
+          availability: data.availability
+        },
+        data.token
+      );
+      toast.success(`Welcome back, ${fullName || 'Developer'}! 👋`);
       navigate('/dashboard');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed');
@@ -52,7 +61,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
-      <div className="bg-gray-900 rounded-2xl p-8 w-full max-w-md shadow-xl">
+      <div className="bg-gray-900 rounded-2xl p-8 w-full max-w-md shadow-xl border border-gray-800">
 
         {/* Header */}
         <div className="mb-8 text-center">
@@ -61,39 +70,43 @@ const Login = () => {
         </div>
 
         {/* Form */}
-        <div className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label className="text-sm text-gray-400 mb-1 block">Email</label>
+            <label htmlFor="email" className="text-sm text-gray-400 mb-1 block">Email</label>
             <input
+              id="email"
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="suriya@devconnect.com"
+              required
               className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
             />
           </div>
 
           <div>
-            <label className="text-sm text-gray-400 mb-1 block">Password</label>
+            <label htmlFor="password" className="text-sm text-gray-400 mb-1 block">Password</label>
             <input
+              id="password"
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter your password"
+              required
               className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
             />
           </div>
 
           <button
-            onClick={handleSubmit}
+            type="submit"
             disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors mt-2"
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
-        </div>
+        </form>
 
         {/* Footer */}
         <p className="text-gray-400 text-center mt-6 text-sm">

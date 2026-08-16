@@ -13,14 +13,13 @@ const CreatePost = ({ onPostCreated }) => {
     if (text.length > 500) return toast.error('Max 500 characters');
 
     try {
-      
-      console.log('running')
+      setLoading(true);
       const { data } = await axios.post('/api/posts', { text });
       onPostCreated(data);
       setText('');
       toast.success('Post created! 🚀');
     } catch (error) {
-      toast.error('Failed to create post');
+      toast.error(error.response?.data?.message || 'Failed to create post');
     } finally {
       setLoading(false);
     }
@@ -38,6 +37,7 @@ const CreatePost = ({ onPostCreated }) => {
             onChange={(e) => setText(e.target.value)}
             placeholder="Share something with developers..."
             rows={3}
+            maxLength={500}
             className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500 resize-none text-sm"
           />
           <div className="flex items-center justify-between mt-2">
