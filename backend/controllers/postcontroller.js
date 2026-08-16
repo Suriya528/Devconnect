@@ -16,9 +16,14 @@ const createPost = asyncHandler(async (req, res) => {
     type: file.mimetype.startsWith('video') ? 'video' : 'image'
   })) || req.body.mediaUrls || []
 
-  const techStack = req.body.techStack
-    ? JSON.parse(req.body.techStack)
-    : []
+  let techStack = [];
+  if (req.body.techStack) {
+    if (typeof req.body.techStack === 'string') {
+      try { techStack = JSON.parse(req.body.techStack); } catch(e) {}
+    } else if (Array.isArray(req.body.techStack)) {
+      techStack = req.body.techStack;
+    }
+  }
 
   const postData = {
     name: req.user._id,
@@ -48,9 +53,14 @@ const createVideoPost = asyncHandler(async (req, res) => {
     throw new Error('Video file is required')
   }
 
-  const techStack = req.body.techStack
-    ? JSON.parse(req.body.techStack)
-    : []
+  let techStack = [];
+  if (req.body.techStack) {
+    if (typeof req.body.techStack === 'string') {
+      try { techStack = JSON.parse(req.body.techStack); } catch(e) {}
+    } else if (Array.isArray(req.body.techStack)) {
+      techStack = req.body.techStack;
+    }
+  }
 
   const postData = {
     name: req.user._id,
