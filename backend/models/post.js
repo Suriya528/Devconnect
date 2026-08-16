@@ -8,8 +8,11 @@ const commentSchema = new mongoose.Schema({
   },
   text: {
     type: String,
-    maxlength: 300,
     required: true
+  },
+  isAiReview: {
+    type: Boolean,
+    default: false
   }
 }, { timestamps: true })
 

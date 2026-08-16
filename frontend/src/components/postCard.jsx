@@ -206,6 +206,7 @@ const PostCard = ({ post, onLike, onDelete, onAddComment, onDeleteComment, onAiR
                   commentUserName.lastName || commentUser.lastName
                 ].filter(Boolean).join(' ') || 'Unknown User';
                 const isCommentOwner = (commentUser._id || commentUser.id)?.toString() === user?._id?.toString();
+                const isAi = comment.isAiReview;
 
                 return (
                   <div key={comment._id} className={`flex items-start gap-2 ${isAi ? 'bg-purple-950/20 -mx-1 px-1 py-1.5 rounded-lg border border-purple-900/30' : ''}`}>
