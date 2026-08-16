@@ -16,6 +16,7 @@ const {
 } = require('../controllers/postcontroller')
 const { protect } = require('../middleware/authmiddleware')
 const { uploadImages, uploadVideo } = require('../middleware/upload')
+const mongoSanitize = require('express-mongo-sanitize')
 
 // Public routes
 router.get('/', getAllPosts)
@@ -25,8 +26,8 @@ router.get('/user/:userId', getPostsByUser)
 router.get('/:id', getPostById)
 
 // Protected routes
-router.post('/', protect, uploadImages.array('images', 4), createPost)
-router.post('/video', protect, uploadVideo.single('video'), createVideoPost)
+router.post('/', protect, uploadImages.array('images', 4), mongoSanitize(), createPost)
+router.post('/video', protect, uploadVideo.single('video'), mongoSanitize(), createVideoPost)
 router.put('/:id/like', protect, toggleLike)
 router.put('/:id/save', protect, savePost)
 router.delete('/:id', protect, deletePost)
