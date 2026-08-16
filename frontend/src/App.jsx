@@ -74,11 +74,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'github/callback',
-        element: (
-          <ProtectedRoute>
-            <GitHubCallback />
-          </ProtectedRoute>
-        )
+        element: <GitHubCallback />
       },
       {
         path: '*',

@@ -65,6 +65,17 @@ io.on('connection', (socket) => {
   })
 })
 
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+const startServer = (port) => {
+  server.listen(port, () => {
+    console.log(`Server running on port ${port}`)
+  }).on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.warn(`Port ${port} in use, trying ${port + 1}...`)
+      startServer(port + 1)
+    } else {
+      console.error('Server error:', err)
+    }
+  })
+}
+
+startServer(PORT)
