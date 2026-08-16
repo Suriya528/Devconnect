@@ -28,7 +28,8 @@ app.use(
 app.use(express.json())
 
 // Security middlewares
-app.use(helmet())
+app.set('trust proxy', 1) // Trust first proxy for rate limiting on Render/Heroku
+app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
 app.use(xss())
 
 const limiter = rateLimit({
