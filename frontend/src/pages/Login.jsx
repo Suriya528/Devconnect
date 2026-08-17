@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import axios from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { Mail, Lock, Loader2, ArrowRight, Code2 } from 'lucide-react';
+import useHapticAudio from '../hooks/useHapticAudio';
 
 const GithubSVG = () => (
   <svg className="w-5 h-5" viewBox="0 0 16 16" fill="currentColor">
@@ -14,6 +15,7 @@ const GithubSVG = () => (
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { playBassDrop } = useHapticAudio();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -57,11 +59,19 @@ const Login = () => {
         },
         data.token
       );
-      toast.success(`Welcome back, ${fullName || 'Developer'}! 👋`);
-      navigate('/dashboard');
+      
+      // Reality Distortion: Screen Shake & Bass Drop on Success
+      playBassDrop();
+      const container = document.getElementById('reality-container') || document.body;
+      container.classList.add('screen-shake');
+      setTimeout(() => {
+        container.classList.remove('screen-shake');
+        toast.success(`Welcome back, ${fullName || 'Developer'}! 👋`);
+        navigate('/dashboard');
+      }, 500);
+
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed');
-    } finally {
       setLoading(false);
     }
   };

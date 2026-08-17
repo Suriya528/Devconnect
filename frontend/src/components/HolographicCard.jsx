@@ -1,9 +1,11 @@
 import React, { useRef, useState } from 'react';
+import useGyroscope from '../hooks/useGyroscope';
 
 const HolographicCard = ({ children, className = '' }) => {
   const cardRef = useRef(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [glarePosition, setGlarePosition] = useState({ x: 50, y: 50 });
+  const gyroTilt = useGyroscope(2);
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseMove = (e) => {
@@ -34,6 +36,9 @@ const HolographicCard = ({ children, className = '' }) => {
     setTilt({ x: 0, y: 0 });
   };
 
+  const rotateX = isHovered ? tilt.x : gyroTilt.x;
+  const rotateY = isHovered ? tilt.y : gyroTilt.y;
+
   return (
     <div 
       className={`perspective-1000 relative w-full ${className}`}
@@ -45,9 +50,7 @@ const HolographicCard = ({ children, className = '' }) => {
         ref={cardRef}
         className="w-full h-full relative transition-transform duration-200 ease-out preserve-3d"
         style={{
-          transform: isHovered 
-            ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateZ(20px)` 
-            : 'rotateX(0deg) rotateY(0deg) translateZ(0)'
+          transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(${isHovered ? '20px' : '0px'})`
         }}
       >
         {/* The Card Background/Glass */}

@@ -73,12 +73,48 @@ const useHapticAudio = () => {
       
       // Physical haptic (pop is slightly longer/stronger)
       if (navigator.vibrate) navigator.vibrate(25);
+    } 
+    else if (type === 'bassdrop') {
+      osc.type = 'sawtooth';
+      
+      // Deep bass slide down
+      osc.frequency.setValueAtTime(150, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 0.5);
+      
+      // Add a lowpass filter to make it sound muffled and heavy
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(300, ctx.currentTime);
+      filter.frequency.linearRampToValueAtTime(50, ctx.currentTime + 0.5);
+      
+      gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+      
+      // Rewire graph to include filter
+      osc.disconnect();
+      osc.connect(filter);
+      
+      if (panner) {
+        filter.connect(gainNode);
+        gainNode.connect(panner);
+        panner.connect(ctx.destination);
+      } else {
+        filter.connect(gainNode);
+        gainNode.connect(ctx.destination);
+      }
+      
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.5);
+      
+      // Physical haptic (heavy prolonged shake)
+      if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
     }
   }, []);
 
   return {
     playTick: (e) => playSound('tick', e?.clientX),
-    playPop: (e) => playSound('pop', e?.clientX)
+    playPop: (e) => playSound('pop', e?.clientX),
+    playBassDrop: () => playSound('bassdrop')
   };
 };
 

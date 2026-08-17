@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
@@ -18,10 +19,18 @@ import CustomCursor from './components/CustomCursor';
 import NoiseOverlay from './components/NoiseOverlay';
 import CommandPalette from './components/CommandPalette';
 import AIOrb from './components/AIOrb';
+import MatrixRain from './components/MatrixRain';
+import useKonamiCode from './hooks/useKonamiCode';
 
 const Layout = () => {
+  const [isMatrixMode, setIsMatrixMode] = useState(false);
+
+  useKonamiCode(() => {
+    setIsMatrixMode(true);
+  });
+
   return (
-    <>
+    <div id="reality-container" className={isMatrixMode ? 'matrix-mode' : ''}>
       {/* SVG Gooey Filter Definition */}
       <svg className="fixed pointer-events-none opacity-0 w-0 h-0 z-[-1]">
         <defs>
@@ -33,7 +42,7 @@ const Layout = () => {
         </defs>
       </svg>
 
-      <div className="aurora-bg" />
+      {isMatrixMode ? <MatrixRain /> : <div className="aurora-bg" />}
       <CustomCursor />
       <NoiseOverlay />
       <CommandPalette />
@@ -45,7 +54,7 @@ const Layout = () => {
       <main id="main-content">
         <Outlet />
       </main>
-    </>
+    </div>
   );
 };
 

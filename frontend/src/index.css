@@ -182,7 +182,40 @@ a, button, input, textarea, select, [role="button"], [role="link"], label {
 /* ===== Biometric Scan Animation ===== */
 @keyframes scan {
   0% { transform: translateX(0); }
-  100% { transform: translateX(350px); } /* Adjust based on button width */
+  100% { transform: translateX(350px); }
+}
+
+/* ===== Reality Distortion: Matrix Mode ===== */
+.matrix-mode {
+  --color-indigo-400: #0f0 !important;
+  --color-indigo-500: #0a0 !important;
+  --color-indigo-600: #080 !important;
+  --color-purple-400: #0f0 !important;
+  --color-purple-500: #0a0 !important;
+  --color-purple-600: #080 !important;
+  --color-pink-400: #0f0 !important;
+  --color-pink-500: #0a0 !important;
+  --color-pink-600: #080 !important;
+  
+  /* Override backgrounds */
+  background-color: #000 !important;
+  color: #0f0 !important;
+}
+
+.matrix-mode * {
+  border-color: rgba(0, 255, 0, 0.2) !important;
+}
+
+/* ===== Reality Distortion: Screen Shake ===== */
+.screen-shake {
+  animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-2px, 0, 0); }
+  20%, 80% { transform: translate3d(4px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
+  40%, 60% { transform: translate3d(8px, 0, 0); }
 }
 
 /* ===== Generative Aurora Background ===== */
