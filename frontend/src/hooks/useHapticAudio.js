@@ -56,6 +56,9 @@ const useHapticAudio = () => {
       
       osc.start(ctx.currentTime);
       osc.stop(ctx.currentTime + 0.02);
+      
+      // Physical haptic (tick is very short)
+      if (navigator.vibrate) navigator.vibrate(10);
     } 
     else if (type === 'pop') {
       osc.type = 'sine';
@@ -67,6 +70,9 @@ const useHapticAudio = () => {
       
       osc.start(ctx.currentTime);
       osc.stop(ctx.currentTime + 0.05);
+      
+      // Physical haptic (pop is slightly longer/stronger)
+      if (navigator.vibrate) navigator.vibrate(25);
     }
   }, []);
 

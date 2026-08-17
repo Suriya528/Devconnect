@@ -130,16 +130,21 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="group w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-3.5 rounded-xl transition-all shadow-lg hover:shadow-indigo-500/25 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+              className={`group w-full flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-4 rounded-xl transition-all shadow-lg hover:shadow-[0_0_30px_rgba(99,102,241,0.5)] disabled:opacity-50 disabled:cursor-not-allowed mt-4 relative overflow-hidden ${loading ? 'animate-pulse' : ''}`}
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Signing in...
+                  <div className="absolute inset-0 bg-indigo-500/20 blur-md"></div>
+                  <div className="absolute top-0 bottom-0 left-0 w-2 bg-indigo-400 animate-[scan_1s_ease-in-out_infinite_alternate] shadow-[0_0_20px_#818cf8]"></div>
+                  <div className="relative z-10 flex items-center gap-2">
+                    <svg className="w-6 h-6 animate-pulse text-indigo-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2C6.48 2 2 6.48 2 12Z"/><path d="M12 8V16"/><path d="M8 12H16"/></svg>
+                    <span className="tracking-widest uppercase text-sm">Scanning Biometrics...</span>
+                  </div>
                 </>
               ) : (
                 <>
-                  Sign in
+                  <svg className="w-6 h-6 text-indigo-200 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2C6.48 2 2 6.48 2 12Z"/><path d="M12 8V16"/><path d="M8 12H16"/></svg>
+                  <span>Authenticate</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </>
               )}
