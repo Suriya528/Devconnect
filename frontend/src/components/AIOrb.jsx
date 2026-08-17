@@ -4,7 +4,7 @@ import { Mic, MicOff, Bot, Battery, WifiOff, Zap } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import useHapticAudio from '../hooks/useHapticAudio';
 
-const AIOrb = () => {
+const AIOrb = ({ forceCenter = false }) => {
   const [isListening, setIsListening] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [deviceState, setDeviceState] = useState({ 
@@ -70,6 +70,7 @@ const AIOrb = () => {
   // Mouse tracking for Orb "looking" at cursor
   useEffect(() => {
     const handleMouseMove = (e) => {
+      if (forceCenter) return;
       setMousePos({
         x: (e.clientX / window.innerWidth - 0.5) * 20,
         y: (e.clientY / window.innerHeight - 0.5) * 20,
@@ -77,7 +78,11 @@ const AIOrb = () => {
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  }, [forceCenter]);
+
+  useEffect(() => {
+    if (forceCenter) setMousePos({ x: 0, y: 0 });
+  }, [forceCenter]);
 
   // Initialize Speech Recognition
   useEffect(() => {
@@ -176,7 +181,9 @@ const AIOrb = () => {
   let orbTheme = 'from-indigo-400 via-purple-500 to-pink-500 shadow-[0_0_30px_rgba(99,102,241,0.5)] bg-indigo-500';
   let StatusIcon = null;
 
-  if (deviceState.isOffline) {
+  if (forceCenter) {
+    orbTheme = 'from-white via-yellow-200 to-yellow-500 shadow-[0_0_100px_rgba(255,255,255,1)] bg-white';
+  } else if (deviceState.isOffline) {
     orbTheme = 'from-gray-500 via-gray-700 to-gray-900 shadow-[0_0_30px_rgba(156,163,175,0.5)] bg-gray-500';
     StatusIcon = WifiOff;
   } else if (deviceState.isCharging) {
@@ -192,8 +199,12 @@ const AIOrb = () => {
   const gradientColors = orbTheme.split(' ').filter(c => c.startsWith('from-') || c.startsWith('via-') || c.startsWith('to-')).join(' ');
   const shadowColor = orbTheme.split(' ').find(c => c.startsWith('shadow-')) || '';
 
+  const containerClass = forceCenter 
+    ? "flex flex-col items-center gap-2 transform scale-[2] pointer-events-auto" 
+    : "fixed bottom-6 right-6 z-[99999] flex flex-col items-center gap-2 pointer-events-auto";
+
   return (
-    <div className="fixed bottom-6 right-6 z-[99999] flex flex-col items-center gap-2">
+    <div className={containerClass}>
       
       {/* Tooltip hint */}
       <div className={`text-xs font-bold text-white/50 transition-opacity ${isListening ? 'opacity-100' : 'opacity-0'}`}>

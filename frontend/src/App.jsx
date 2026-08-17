@@ -21,17 +21,45 @@ import CommandPalette from './components/CommandPalette';
 import AIOrb from './components/AIOrb';
 import MatrixRain from './components/MatrixRain';
 import useKonamiCode from './hooks/useKonamiCode';
+import GodTerminal from './components/GodTerminal';
+import useHapticAudio from './hooks/useHapticAudio';
 
 const Layout = () => {
   const [isMatrixMode, setIsMatrixMode] = useState(false);
+  const [isAscended, setIsAscended] = useState(false);
+  const [showSupernova, setShowSupernova] = useState(false);
+  
+  const { playBassDrop, playAscendChime, startCathedralDrone } = useHapticAudio();
 
   useKonamiCode(() => {
     setIsMatrixMode(true);
+    playBassDrop();
   });
 
+  const handleAscend = () => {
+    setIsMatrixMode(false);
+    setShowSupernova(true);
+    setIsAscended(true);
+    playAscendChime();
+    startCathedralDrone();
+    
+    setTimeout(() => {
+      setShowSupernova(false);
+    }, 3000);
+  };
+
+  const containerClasses = [
+    isMatrixMode ? 'matrix-mode' : '',
+    isAscended ? 'ascended-mode' : ''
+  ].join(' ');
+
   return (
-    <div id="reality-container" className={isMatrixMode ? 'matrix-mode' : ''}>
-      {/* SVG Gooey Filter Definition */}
+    <div id="reality-container" className={containerClasses} style={isAscended ? { filter: 'url(#singularity)' } : {}}>
+      
+      {showSupernova && <div className="supernova-flash" />}
+      <GodTerminal onAscend={handleAscend} />
+
+      {/* SVG Filters */}
       <svg className="fixed pointer-events-none opacity-0 w-0 h-0 z-[-1]">
         <defs>
           <filter id="gooey">
@@ -39,6 +67,13 @@ const Layout = () => {
             <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="gooey" />
             <feBlend in="SourceGraphic" in2="gooey" />
           </filter>
+          
+          {isAscended && (
+            <filter id="singularity" x="-20%" y="-20%" width="140%" height="140%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="50" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+          )}
         </defs>
       </svg>
 
@@ -46,7 +81,10 @@ const Layout = () => {
       <CustomCursor />
       <NoiseOverlay />
       <CommandPalette />
-      <AIOrb />
+      
+      <div className={isAscended ? "fixed inset-0 flex items-center justify-center z-[99999] pointer-events-none" : ""}>
+        <AIOrb forceCenter={isAscended} />
+      </div>
       <a href="#main-content" className="skip-to-content">
         Skip to main content
       </a>

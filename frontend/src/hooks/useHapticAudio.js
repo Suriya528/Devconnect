@@ -109,12 +109,77 @@ const useHapticAudio = () => {
       // Physical haptic (heavy prolonged shake)
       if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
     }
+    else if (type === 'ascend_chime') {
+      osc.type = 'sine';
+      
+      // Holy glowing chord
+      const freqs = [440, 554.37, 659.25, 880]; // A Major chord
+      
+      freqs.forEach(freq => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sine';
+        o.frequency.value = freq;
+        
+        g.gain.setValueAtTime(0, ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.5);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 5);
+        
+        o.connect(g);
+        g.connect(ctx.destination);
+        o.start();
+        o.stop(ctx.currentTime + 5);
+      });
+      
+      if (navigator.vibrate) navigator.vibrate([500]);
+    }
   }, []);
+
+  const startCathedralDrone = () => {
+    const ctx = getContext();
+    if (!ctx) return;
+    
+    // Create an ambient, shifting drone
+    const droneGain = ctx.createGain();
+    droneGain.gain.setValueAtTime(0, ctx.currentTime);
+    droneGain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 5);
+    droneGain.connect(ctx.destination);
+    
+    // Multiple low frequency sine/triangle waves beating against each other
+    const freqs = [55, 55.5, 110, 111]; 
+    const oscs = [];
+    
+    freqs.forEach(freq => {
+      const o = ctx.createOscillator();
+      o.type = 'triangle';
+      o.frequency.value = freq;
+      o.connect(droneGain);
+      o.start();
+      oscs.push(o);
+    });
+    
+    // Store in window so we can stop it if needed
+    window._cathedralDrone = { oscs, gain: droneGain };
+  };
+
+  const stopCathedralDrone = () => {
+    if (window._cathedralDrone) {
+      const { oscs, gain } = window._cathedralDrone;
+      gain.gain.linearRampToValueAtTime(0, getContext().currentTime + 2);
+      setTimeout(() => {
+        oscs.forEach(o => o.stop());
+      }, 2000);
+      window._cathedralDrone = null;
+    }
+  };
 
   return {
     playTick: (e) => playSound('tick', e?.clientX),
     playPop: (e) => playSound('pop', e?.clientX),
-    playBassDrop: () => playSound('bassdrop')
+    playBassDrop: () => playSound('bassdrop'),
+    playAscendChime: () => playSound('ascend_chime'),
+    startCathedralDrone,
+    stopCathedralDrone
   };
 };
 

@@ -218,6 +218,56 @@ a, button, input, textarea, select, [role="button"], [role="link"], label {
   40%, 60% { transform: translate3d(8px, 0, 0); }
 }
 
+/* ===== Reality Distortion: Ascended Mode ===== */
+.ascended-mode {
+  --color-indigo-400: #ffd700 !important; /* Gold */
+  --color-indigo-500: #ffea00 !important;
+  --color-indigo-600: #ffdf00 !important;
+  --color-purple-400: #ffffff !important; /* Pure White */
+  --color-purple-500: #ffffff !important;
+  --color-purple-600: #eeeeee !important;
+  --color-pink-400: #fffae6 !important;
+  --color-pink-500: #fff5cc !important;
+  --color-pink-600: #ffebb3 !important;
+  
+  /* Override backgrounds */
+  background-color: #ffffff !important;
+  color: #333333 !important;
+}
+
+.ascended-mode * {
+  border-color: rgba(255, 215, 0, 0.3) !important;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Make text dark in ascended mode so it's readable on white background */
+.ascended-mode h1, .ascended-mode h2, .ascended-mode h3, .ascended-mode p, .ascended-mode span {
+  color: #111 !important;
+  text-shadow: 0 0 10px rgba(255,215,0,0.3) !important;
+}
+
+.ascended-mode input, .ascended-mode textarea {
+  color: #111 !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ===== Reality Distortion: Supernova Flash ===== */
+.supernova-flash {
+  position: fixed;
+  inset: 0;
+  background-color: white;
+  z-index: 9999999;
+  animation: supernova 3s cubic-bezier(0.1, 0.8, 0.1, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes supernova {
+  0% { opacity: 0; background-color: white; }
+  10% { opacity: 1; background-color: white; }
+  50% { opacity: 1; background-color: #ffd700; mix-blend-mode: color-dodge; }
+  100% { opacity: 0; background-color: white; mix-blend-mode: normal; }
+}
+
 /* ===== Generative Aurora Background ===== */
 .aurora-bg {
   position: fixed;
