@@ -14,10 +14,30 @@ import DeveloperProfile from './pages/DeveloperProfile';
 import ProfilePage from './pages/ProfilePage';
 import GitHubCallback from './pages/GitHubCallback';
 import NotFound from './pages/NotFound';
+import CustomCursor from './components/CustomCursor';
+import NoiseOverlay from './components/NoiseOverlay';
+import CommandPalette from './components/CommandPalette';
+import AIOrb from './components/AIOrb';
 
 const Layout = () => {
   return (
     <>
+      {/* SVG Gooey Filter Definition */}
+      <svg className="fixed pointer-events-none opacity-0 w-0 h-0 z-[-1]">
+        <defs>
+          <filter id="gooey">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="gooey" />
+            <feBlend in="SourceGraphic" in2="gooey" />
+          </filter>
+        </defs>
+      </svg>
+
+      <div className="aurora-bg" />
+      <CustomCursor />
+      <NoiseOverlay />
+      <CommandPalette />
+      <AIOrb />
       <a href="#main-content" className="skip-to-content">
         Skip to main content
       </a>
