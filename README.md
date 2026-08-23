@@ -182,5 +182,5 @@ dist/assets/react-vendor-BfFUVDmT.js      310.64 kB │ gzip: 100.20 kB
 
 ## 📄 License & Attribution
 
-Designed & Developed with high-precision engineering by **Suriya** & **Antigravity AI**.
+Designed & Developed with high-precision engineering by **Suriya E**.
 Licensed under the [MIT License](LICENSE).
