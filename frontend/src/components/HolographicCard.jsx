@@ -8,26 +8,37 @@ const HolographicCard = ({ children, className = '' }) => {
   const gyroTilt = useGyroscope(2);
   const [isHovered, setIsHovered] = useState(false);
 
+  let ticking = useRef(false);
+
   const handleMouseMove = (e) => {
-    if (!cardRef.current) return;
+    if (!cardRef.current || ticking.current) return;
     
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left; // x position within the element.
-    const y = e.clientY - rect.top;  // y position within the element.
-    
-    // Calculate tilt
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    
-    const tiltX = ((y - centerY) / centerY) * -10; // Max tilt 10deg
-    const tiltY = ((x - centerX) / centerX) * 10;
-    
-    setTilt({ x: tiltX, y: tiltY });
-    
-    // Calculate glare (percentage)
-    setGlarePosition({
-      x: (x / rect.width) * 100,
-      y: (y / rect.height) * 100
+    ticking.current = true;
+    const clientX = e.clientX;
+    const clientY = e.clientY;
+
+    window.requestAnimationFrame(() => {
+      if (!cardRef.current) {
+        ticking.current = false;
+        return;
+      }
+      const rect = cardRef.current.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      
+      const tiltX = ((y - centerY) / centerY) * -10;
+      const tiltY = ((x - centerX) / centerX) * 10;
+      
+      setTilt({ x: tiltX, y: tiltY });
+      
+      setGlarePosition({
+        x: (x / rect.width) * 100,
+        y: (y / rect.height) * 100
+      });
+      ticking.current = false;
     });
   };
 
@@ -77,4 +88,4 @@ const HolographicCard = ({ children, className = '' }) => {
   );
 };
 
-export default HolographicCard;
+export default React.memo(HolographicCard);

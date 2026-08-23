@@ -1,20 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/navbar';
 import ProtectedRoute from './components/protectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import Feed from './pages/feed';
-import SearchPage from './pages/SearchPage';
-import DeveloperProfile from './pages/DeveloperProfile';
-import ProfilePage from './pages/ProfilePage';
-import GitHubCallback from './pages/GitHubCallback';
-import NotFound from './pages/NotFound';
+import PageLoader from './components/PageLoader';
+import OfflineNotifier from './components/OfflineNotifier';
 import CustomCursor from './components/CustomCursor';
 import NoiseOverlay from './components/NoiseOverlay';
 import CommandPalette from './components/CommandPalette';
@@ -23,6 +15,18 @@ import MatrixRain from './components/MatrixRain';
 import useKonamiCode from './hooks/useKonamiCode';
 import GodTerminal from './components/GodTerminal';
 import useHapticAudio from './hooks/useHapticAudio';
+
+// Lazy Loaded Pages for Performance Optimization & Code Splitting
+const Home = lazy(() => import('./pages/Home'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Feed = lazy(() => import('./pages/feed'));
+const SearchPage = lazy(() => import('./pages/SearchPage'));
+const DeveloperProfile = lazy(() => import('./pages/DeveloperProfile'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const GitHubCallback = lazy(() => import('./pages/GitHubCallback'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 const Layout = () => {
   const [isMatrixMode, setIsMatrixMode] = useState(false);
@@ -55,7 +59,7 @@ const Layout = () => {
 
   return (
     <div id="reality-container" className={containerClasses} style={isAscended ? { filter: 'url(#singularity)' } : {}}>
-      
+      <OfflineNotifier />
       {showSupernova && <div className="supernova-flash" />}
       <GodTerminal onAscend={handleAscend} />
 
@@ -85,12 +89,15 @@ const Layout = () => {
       <div className={isAscended ? "fixed inset-0 flex items-center justify-center z-[99999] pointer-events-none" : ""}>
         <AIOrb forceCenter={isAscended} />
       </div>
+
       <a href="#main-content" className="skip-to-content">
         Skip to main content
       </a>
       <Navbar />
       <main id="main-content">
-        <Outlet />
+        <Suspense fallback={<PageLoader />}>
+          <Outlet />
+        </Suspense>
       </main>
     </div>
   );

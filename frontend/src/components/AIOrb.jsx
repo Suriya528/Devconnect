@@ -67,14 +67,21 @@ const AIOrb = ({ forceCenter = false }) => {
     window.speechSynthesis.speak(utterance);
   };
 
-  // Mouse tracking for Orb "looking" at cursor
+  // Mouse tracking for Orb "looking" at cursor (rAF throttled for 60FPS)
   useEffect(() => {
+    let ticking = false;
     const handleMouseMove = (e) => {
       if (forceCenter) return;
-      setMousePos({
-        x: (e.clientX / window.innerWidth - 0.5) * 20,
-        y: (e.clientY / window.innerHeight - 0.5) * 20,
-      });
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setMousePos({
+            x: (e.clientX / window.innerWidth - 0.5) * 20,
+            y: (e.clientY / window.innerHeight - 0.5) * 20,
+          });
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
