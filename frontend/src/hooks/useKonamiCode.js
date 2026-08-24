@@ -13,6 +13,7 @@ const useKonamiCode = (callback) => {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
+      if (!e?.key) return;
       const key = e.key;
       // Allow uppercase B and A as well
       const normalizedKey = (key === 'B' || key === 'A') ? key.toLowerCase() : key;
