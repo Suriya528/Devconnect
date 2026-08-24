@@ -176,7 +176,7 @@ const AIOrb = ({ forceCenter = false }) => {
   // Global hotkey 'V' to toggle voice
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key.toLowerCase() === 'v' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+      if (e?.key && e.key.toLowerCase() === 'v' && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
         toggleListening();
       }
     };
